@@ -30,7 +30,7 @@ st.sidebar.header("Food Loss & Waste Database by FAO")
 ########################################
 
 #FLW-Database einlesen
-df = pd.read_csv("data\Data.csv")
+df = pd.read_csv("data/Data.csv")
 
 # einlesen der Zuordnungsdatei von Ländern zu Einkommensgruppen und Regionen nach der Weltbank
 country_categories_tidy= pd.read_csv('data/country_categories_tidy.csv', delimiter=';')
