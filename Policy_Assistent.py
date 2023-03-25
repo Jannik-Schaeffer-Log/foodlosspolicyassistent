@@ -21,7 +21,7 @@ st.sidebar.success("Select a page above.")
 ########################################
 # Configure Page
 ########################################
-st.set_page_config(page_title="Food loss policy-assistent", page_icon="🥑",layout="wide")
+#st.set_page_config(page_title="Food loss policy-assistent", page_icon="🥑",layout="wide")
 
 ########################################
 # Add Title
