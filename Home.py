@@ -1,25 +1,16 @@
 ########################################
 # Import libraries
 ########################################
-import streamlit as st
-import pandas as pd
 import numpy as np
-# import plotly
-# import plotly.graph_objects as go
-# import plotly.express as px
-import pandas_profiling
-from streamlit_pandas_profiling import st_profile_report
-import seaborn as sns
-import matplotlib.pyplot as plt
-
+import pandas as pd
+#import plotly.express as px
+import streamlit as st
 from scipy import stats
 from sklearn.linear_model import LinearRegression
 from factor_analyzer import FactorAnalyzer
 from factor_analyzer.factor_analyzer import calculate_bartlett_sphericity
 from factor_analyzer.factor_analyzer import calculate_kmo
 from factor_analyzer import (ConfirmatoryFactorAnalyzer, ModelSpecificationParser)
-
-import scipy.stats
 
 ########################################
 # Add Sidebar
