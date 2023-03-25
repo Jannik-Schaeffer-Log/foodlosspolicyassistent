@@ -25,7 +25,7 @@ st.sidebar.header("Logistic Performance Index by World Bank")
 ########################################
 # Daten einlesen und bereinigen
 ########################################
-df = pd.read_csv("data\LPI_Data.csv", encoding='latin-1')
+df = pd.read_csv("data/LPI_Data.csv", encoding='latin-1')
 country_categories_tidy= pd.read_csv('data/country_categories_tidy.csv', delimiter=';')
 df_LPI_new_country_names= pd.read_csv("data/LPI_Countries_name_changes.csv", delimiter=';')
 
