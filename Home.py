@@ -13,12 +13,10 @@ from factor_analyzer.factor_analyzer import calculate_kmo
 from factor_analyzer import (ConfirmatoryFactorAnalyzer, ModelSpecificationParser)
 
 import scipy.stats
-
 ########################################
 # Add Sidebar
 ########################################
 st.sidebar.success("Select a page above.")
-
 
 ########################################
 # Configure Page
@@ -185,9 +183,9 @@ df_reg=df_reg.drop(columns=['commodity'])
 
 dict_income_group={
     'UPPER-MIDDLE-INCOME ECONOMIES ($4,256 TO $13,205)':'Upper-Middle-Income Economies',
-    'LOW-INCOME ECONOMIES ($1,085 OR LESS) ':'Low-Income Economies',
+    'LOW-INCOME ECONOMIES ($1,085 OR LESS) ':'Low-Income Economies',
     'LOWER-MIDDLE INCOME ECONOMIES ($1,086 TO $4,255)':'Lower-Middle Income Economies',
-    'HIGH-INCOME ECONOMIES ($13,205 OR MORE) ':'High-Income Economies'
+    'HIGH-INCOME ECONOMIES ($13,205 OR MORE) ':'High-Income Economies'
 }
 
 df_reg['Income']=df_reg['Income'].replace(dict_income_group)
