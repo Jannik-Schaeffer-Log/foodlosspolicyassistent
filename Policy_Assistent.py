@@ -490,76 +490,76 @@ LPI_cat_order_country=LPI_cat_order_country.replace({'LPI-Category ordered by Pr
 #Factor Analysis
 ################
 data_raw = pd.read_csv('data/CFA_Policies.csv',sep=';')
-data=data_raw
-LPI_categories=data['LPI-category'].unique()
+# data=data_raw
+# LPI_categories=data['LPI-category'].unique()
 
-#Functions to avoid singular matrix error
-mu=0.0
-std = 0.1
-np.random.seed(21389712) #repeatable random number
-def gaussian_noise(x):
-    noise = np.random.normal(mu, std, size = x.shape)
-    x_noisy = x + noise
-    return x_noisy 
+# #Functions to avoid singular matrix error
+# mu=0.0
+# std = 0.1
+# np.random.seed(21389712) #repeatable random number
+# def gaussian_noise(x):
+#     noise = np.random.normal(mu, std, size = x.shape)
+#     x_noisy = x + noise
+#     return x_noisy 
 
-def make_nonsingular(matrix):
-  n = matrix.shape[0]
-  m = matrix.shape[1]
-  for i in range(n):
-    for j in range(m):
-      matrix.iloc[i, j] = gaussian_noise(matrix.iloc[i, j])
-  return matrix
-
-
-################
-#confirmatory factor analysis
-################
-from sklearn.preprocessing import StandardScaler
-from sklearn.preprocessing import MinMaxScaler
-from sklearn.preprocessing import Normalizer
+# def make_nonsingular(matrix):
+#   n = matrix.shape[0]
+#   m = matrix.shape[1]
+#   for i in range(n):
+#     for j in range(m):
+#       matrix.iloc[i, j] = gaussian_noise(matrix.iloc[i, j])
+#   return matrix
 
 
-scale1= MinMaxScaler()
-scale2= StandardScaler()
-scale3=Normalizer()
-# standardization of dependent variables
+# ################
+# #confirmatory factor analysis
+# ################
+# from sklearn.preprocessing import StandardScaler
+# from sklearn.preprocessing import MinMaxScaler
+# from sklearn.preprocessing import Normalizer
 
-data= data.iloc[:,[2,3,4,5,6]]
-data= data.T
-data=make_nonsingular(data)
-data= scale1.fit_transform(data)
 
-model_dict = {"F1": [0,1,2,3,4,5,6,7],
-              "F2": [8,9,10],
-              "F3": [11,12,13,14,15,16],
-              "F4": [17,18,19,20,21,22,23,24],
-              "F5": [25,26,27,28,29,30],
-              "F6": [31]}
-model_spec = ModelSpecificationParser.parse_model_specification_from_dict(data,model_dict)
+# scale1= MinMaxScaler()
+# scale2= StandardScaler()
+# scale3=Normalizer()
+# # standardization of dependent variables
 
-cfa = ConfirmatoryFactorAnalyzer(model_spec, disp=False)
+# data= data.iloc[:,[2,3,4,5,6]]
+# data= data.T
+# data=make_nonsingular(data)
+# data= scale1.fit_transform(data)
 
-cfa.fit(data)
+# model_dict = {"F1": [0,1,2,3,4,5,6,7],
+#               "F2": [8,9,10],
+#               "F3": [11,12,13,14,15,16],
+#               "F4": [17,18,19,20,21,22,23,24],
+#               "F5": [25,26,27,28,29,30],
+#               "F6": [31]}
+# model_spec = ModelSpecificationParser.parse_model_specification_from_dict(data,model_dict)
 
-Factor_loading=pd.DataFrame(cfa.loadings_)
-Factor_loading['factor_loadings']=Factor_loading.replace(0,np.nan).max(1)
+# cfa = ConfirmatoryFactorAnalyzer(model_spec, disp=False)
 
-#Prüfkriterien
-def factor_analysis(LPI_cat):
-    LPI_category_data=data_raw[data_raw['LPI-category']==LPI_cat]
-    X=LPI_category_data[['survey_1','survey_2','survey_3','survey_4','survey_5']]
+# cfa.fit(data)
+
+# Factor_loading=pd.DataFrame(cfa.loadings_)
+# Factor_loading['factor_loadings']=Factor_loading.replace(0,np.nan).max(1)
+
+# #Prüfkriterien
+# def factor_analysis(LPI_cat):
+#     LPI_category_data=data_raw[data_raw['LPI-category']==LPI_cat]
+#     X=LPI_category_data[['survey_1','survey_2','survey_3','survey_4','survey_5']]
     
-    # with st.expander(f'See the factoranalysis insights of {LPI_cat}'):
-    #     st.write(f"{LPI_cat}: Chi-value, p-value ", calculate_bartlett_sphericity(X))
-    #     st.write(f"{LPI_cat}: Kaiser-Meyer-Olkin criterion per variable, in total ", calculate_kmo(X))
+#     # with st.expander(f'See the factoranalysis insights of {LPI_cat}'):
+#     #     st.write(f"{LPI_cat}: Chi-value, p-value ", calculate_bartlett_sphericity(X))
+#     #     st.write(f"{LPI_cat}: Kaiser-Meyer-Olkin criterion per variable, in total ", calculate_kmo(X))
 
-    return
+#     return
 
-for i in range(len(LPI_categories)-1):
-    factor_analysis(LPI_categories[i])
+# for i in range(len(LPI_categories)-1):
+#     factor_analysis(LPI_categories[i])
 
 
-data_raw['factor_loading']=Factor_loading['factor_loadings']
+# data_raw['factor_loading']=Factor_loading['factor_loadings']
 
 st.write(f"The policies are selected by a linear Regression with Data from the ['Food Loss and Waste Database'](https://www.fao.org/platform-food-loss-waste/flw-data/en/) & ['Logistics Performance index'](https://lpi.worldbank.org/) and a Q-Methodolgy to integrate expert knowledge.")
 st.write("Explore the **analysis-tools** linked in **sidebar on the left** for additional insights on the datasets used.")
