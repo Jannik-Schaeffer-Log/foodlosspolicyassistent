@@ -559,7 +559,7 @@ data_raw = pd.read_csv('data/CFA_Policies.csv',sep=';')
 #     factor_analysis(LPI_categories[i])
 
 
-# data_raw['factor_loading']=Factor_loading['factor_loadings']
+# data_raw['factor_loadings']=Factor_loading['factor_loadings']
 
 st.write(f"The policies are selected by a linear Regression with Data from the ['Food Loss and Waste Database'](https://www.fao.org/platform-food-loss-waste/flw-data/en/) & ['Logistics Performance index'](https://lpi.worldbank.org/) and a Q-Methodolgy to integrate expert knowledge.")
 st.write("Explore the **analysis-tools** linked in **sidebar on the left** for additional insights on the datasets used.")
@@ -581,7 +581,7 @@ st.markdown(hide_table_row_index, unsafe_allow_html=True)
 for i in range(len(LPI_cat_order_country['LPI-Category ordered by Priority (highest first)'])):
     LPI_cat = LPI_cat_order_country['LPI-Category ordered by Priority (highest first)'][i]
     data_LPI_cat = data_raw[data_raw['LPI-category']==LPI_cat]
-    data_LPI_cat = pd.DataFrame(data_LPI_cat).sort_values(by=['factor_loading'],ascending=False)
+    data_LPI_cat = pd.DataFrame(data_LPI_cat).sort_values(by=['factor_loadings'],ascending=False)
     data_LPI_cat = data_LPI_cat.fillna(np.nan)
     if i ==0: 
         st.write(f'**1st Priority** are Policies related to the LPI-Category: **{LPI_cat}**.')
