@@ -357,7 +357,7 @@ df_line_chart_categories=df_line_chart_categories[df_line_chart_categories[f'{op
 # Erstellen des Liniendiagramms  
 titel_eng_linechart2="Linechart of food loss percentage for"
 titel_dt_linechart2="Liniendiagramm Lebensmittelverluste nach Stufen der Lebensmittlelieferkette"
-fig3 = px.line(df_line_chart_categories, x="year", y="loss_percentage", color=f"{option_barchart}", title=f"{titel_eng_linechart2}",markers=True)
+fig3 = px.line(df_line_chart_categories, x="year", y="loss_percentage", color=f"{option_barchart}", title=f"{titel_eng_linechart2} {option_barchart}",markers=True)
 xaxis_eng_line2="year"
 xaxis_dt_line2='Jahr'
 yaxis_eng_line2="Food Loss "
