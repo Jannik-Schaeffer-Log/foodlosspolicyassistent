@@ -225,14 +225,13 @@ fig = go.Figure(data=go.Choropleth(
 ))
 fig.update_layout(margin={"r":0,"t":25,"l":0,"b":0})
 titel_eng_map='Food Loss Percentage'
-titel_dt_map="Choroplethenkarte der gemittelten prozentualen Lebensmittelverluste und -abfälle"
+#titel_dt_map="Choroplethenkarte der gemittelten prozentualen Lebensmittelverluste und -abfälle"
 fig.update_layout(
-    title_text = titel_dt_map,
+    title_text = titel_eng_map,
     title_x=0.5,
     geo_scope='world', 
     template='simple_white',
 )
-#fig.update_layout(legend_title_text='Lebenmittelverluste und-abfälle in %')
 
 #Abbilden des Graphen
 st.plotly_chart(fig, use_container_width=True)
@@ -250,13 +249,13 @@ fig1 = go.Figure()
 fig1.add_trace(
     go.Scatter(x=list(df_line_chart.index), y=list(df_line_chart['loss_percentage'])))
 titel_eng_map="Mean Food Loss Percentage"
-titel_dt_map="Liniendiagramm gemittelter Lebensmittelverluste und -abfälle"
+#titel_dt_map="Liniendiagramm gemittelter Lebensmittelverluste und -abfälle"
 fig1.update_layout(
-    title_text=titel_dt_map,
+    title_text=titel_eng_map,
     template='seaborn',
     width=300, height=400,
-    xaxis_title='Lebensmittelverluste und -abfälle in %', 
-    yaxis_title= 'Jahr'
+    xaxis_title='Foodloss and waste in %', 
+    yaxis_title= 'year'
 )
 fig1.update_layout(
     xaxis=dict(
@@ -309,19 +308,20 @@ if 'Nan' in df_bar_chart.index:
 
 # Erstellen des Balkendiagramms
 titel_eng_barchart="Barchart of value counts for"
-titel_dt_barchart="Balkendiagramm der Häufigkeiten nach "
-fig2 = px.bar(df_bar_chart, x=f"{option_barchart}", title=f"{titel_dt_barchart} {option_barchart}",  orientation='h')
-xaxixs_eng_bar2="value counts"
+#titel_dt_barchart="Balkendiagramm der Häufigkeiten nach Methoden der Datenerhebung"
+fig2 = px.bar(df_bar_chart, x=f"{option_barchart}", title=f"{titel_eng_barchart} {option_barchart}",  orientation='h') #{option_barchart}
+xaxis_eng_bar2="value counts"
 xaxis_dt_bar2='Anzahl der Datenpunkte'
-yaxis_dt_bar2=option_barchart
+yaxis_dt_bar2='Methoden der Datenerhebung'
+yaxis_eng_bar2={option_barchart}
 if option_barchart=="Commodity Groups":
-    yaxis_dt_bar2='Waren-Gruppe'
-fig2.update_layout(xaxis_title=xaxis_dt_bar2, yaxis_title=f'{yaxis_dt_bar2}', template='seaborn',)
+    yaxis_dt_bar2='Warengruppe'
+    yaxis_eng_bar2='Commodity Groups'
+fig2.update_layout(xaxis_title=xaxis_eng_bar2, yaxis_title=yaxis_eng_bar2, template='seaborn',)
 
 # Abbilden des Graphen
 with col6:
     st.plotly_chart(fig2, use_container_width=True)
-
 
 
 ########################################
@@ -356,13 +356,13 @@ df_line_chart_categories=df_line_chart_categories[df_line_chart_categories[f'{op
 
 # Erstellen des Liniendiagramms  
 titel_eng_linechart2="Linechart of food loss percentage for"
-titel_dt_linechart2="Liniendiagramm der Häufigkeiten nach "
-fig3 = px.line(df_line_chart_categories, x="year", y="loss_percentage", color=f"{option_barchart}", title=f"{titel_dt_linechart2} {option_barchart}",markers=True)
-xaxixs_eng_line2="year"
+titel_dt_linechart2="Liniendiagramm Lebensmittelverluste nach Stufen der Lebensmittlelieferkette"
+fig3 = px.line(df_line_chart_categories, x="year", y="loss_percentage", color=f"{option_barchart}", title=f"{titel_eng_linechart2}",markers=True)
+xaxis_eng_line2="year"
 xaxis_dt_line2='Jahr'
-yaxixs_eng_line2="Food Loss "
+yaxis_eng_line2="Food Loss "
 yaxis_dt_line2='Lebensmittelverluste in'
-fig3.update_layout(xaxis_title=xaxis_dt_line2, yaxis_title=f'{yaxis_dt_line2} %', template='seaborn')
+fig3.update_layout(xaxis_title=xaxis_eng_line2, yaxis_title=f'{yaxis_eng_line2} %',legend_title_text=f'{option_barchart}', template='seaborn')
 
 # Abbilden des Graphen
 with col8:
@@ -380,20 +380,20 @@ df_histogram_chart=df_histogram_chart[df_histogram_chart[f'{option_barchart}'].i
 
 # Erstellen des Liniendiagramms 
 titel_eng_hist="Histogramm of "
-titel_dt_hist="Histogramm ausgewählter Kategorien von "
-xaxixs_eng_hist="year"
+titel_dt_hist="Histogramm nach Stufen der Lebensmittlelieferkette"
+xaxis_eng_hist="year"
 xaxis_dt_hsit='Jahr'
-yaxixs_eng_hist="value counts "
+yaxis_eng_hist="value counts "
 yaxis_dt_hist='Anzahl der Datenpunkte'
-fig4=px.histogram(df_histogram_chart, x="year", y="loss_percentage", color=f"{option_barchart}" ,nbins=(years[1]-years[0]+1), marginal="rug", title=f'{titel_dt_hist} {option_barchart}',hover_data=df_filtered.columns)
-fig4.update_layout(xaxis_title=xaxis_dt_hsit, yaxis_title=yaxis_dt_hist, template='seaborn')
+fig4=px.histogram(df_histogram_chart, x="year", y="loss_percentage", color=f"{option_barchart}" ,nbins=(years[1]-years[0]+1), marginal="rug", title=f'{titel_eng_hist}',hover_data=df_filtered.columns)
+fig4.update_layout(xaxis_title=xaxis_eng_hist, yaxis_title=yaxis_eng_hist,legend_title_text=f'{option_barchart}', template='seaborn')
 
 # Abbilden des Graphen
 st.plotly_chart(fig4, use_container_width=True)
 
 
 ########################################
-# Further Insight in raw Data
+# Weiter Einsichten in die Rohdaten
 ########################################
 
 # Zeigen der zugrundeliegenden gefilterten Daten
