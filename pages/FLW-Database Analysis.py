@@ -94,7 +94,7 @@ dict_income_group={
     'Nan':'Lower-Middle Income Economies',
 }
 
-df_merged['Income']=df_merged['Income'].replace(dict_income_group_dt)
+df_merged['Income']=df_merged['Income'].replace(dict_income_group)
 
 dict_region={
     'SUB-SAHARAN AFRICA': 'Sub-Saharan Africa',
@@ -115,7 +115,7 @@ dict_region_dt={
     'NORTH AMERICA':'Nord Amerika',
 }
 
-df_merged['Region']=df_merged['Region'].replace(dict_region_dt)
+df_merged['Region']=df_merged['Region'].replace(dict_region)
 
 # Hinzufügen der Warengruppen zu der FLW-Database
 df_merged=pd.merge(df_merged,commodity_groups_tidy, how='inner', left_on='commodity', right_on='Commodities')
@@ -313,11 +313,11 @@ fig2 = px.bar(df_bar_chart, x=f"{option_barchart}", title=f"{titel_eng_barchart}
 xaxis_eng_bar2="value counts"
 xaxis_dt_bar2='Anzahl der Datenpunkte'
 yaxis_dt_bar2='Methoden der Datenerhebung'
-yaxis_eng_bar2={option_barchart}
+yaxis_eng_bar2=option_barchart
 if option_barchart=="Commodity Groups":
     yaxis_dt_bar2='Warengruppe'
     yaxis_eng_bar2='Commodity Groups'
-fig2.update_layout(xaxis_title=xaxis_eng_bar2, yaxis_title=yaxis_eng_bar2, template='seaborn',)
+fig2.update_layout(xaxis_title=xaxis_eng_bar2, yaxis_title=yaxis_eng_bar2, template='seaborn')
 
 # Abbilden des Graphen
 with col6:
