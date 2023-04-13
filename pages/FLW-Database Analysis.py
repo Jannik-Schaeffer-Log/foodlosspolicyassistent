@@ -385,7 +385,7 @@ xaxis_eng_hist="year"
 xaxis_dt_hsit='Jahr'
 yaxis_eng_hist="value counts "
 yaxis_dt_hist='Anzahl der Datenpunkte'
-fig4=px.histogram(df_histogram_chart, x="year", y="loss_percentage", color=f"{option_barchart}" ,nbins=(years[1]-years[0]+1), marginal="rug", title=f'{titel_eng_hist}',hover_data=df_filtered.columns)
+fig4=px.histogram(df_histogram_chart, x="year", y="loss_percentage", color=f"{option_barchart}" ,nbins=(years[1]-years[0]+1), marginal="rug", title=f'{titel_eng_hist} {option_barchart}',hover_data=df_filtered.columns)
 fig4.update_layout(xaxis_title=xaxis_eng_hist, yaxis_title=yaxis_eng_hist,legend_title_text=f'{option_barchart}', template='seaborn')
 
 # Abbilden des Graphen
