@@ -1,36 +1,31 @@
 ########################################
-# Import libraries
+# Importieren der Module
 ########################################
 import numpy as np
 import pandas as pd
-import plotly.express as px
 import streamlit as st
 from scipy import stats
 from sklearn.linear_model import LinearRegression
-from factor_analyzer import FactorAnalyzer
 from factor_analyzer.factor_analyzer import calculate_bartlett_sphericity
 from factor_analyzer.factor_analyzer import calculate_kmo
 from factor_analyzer import (ConfirmatoryFactorAnalyzer, ModelSpecificationParser)
 
-import scipy.stats
-########################################
-# Add Sidebar
-########################################
-st.sidebar.success("Select a page above.")
 
 ########################################
-# Configure Page
+# Kofiguration der Seite
 ########################################
-#st.set_page_config(page_title="Food loss policy-assistent", page_icon="🥑",layout="wide")
+st.set_page_config(page_title="Food loss policy-assistent", page_icon="🥑",layout="wide")
+
 
 ########################################
-# Add Title
+# Einfügen von Titeln
 ########################################
 st.header("Logistics policy-assistent to reduce food loss")
 st.sidebar.header("Policy-assistent")
 
+
 ########################################
-# Read Data
+# Daten einlesen und bereinigen
 ########################################
 # LPI Data
 df_LPI= pd.read_csv("data/LPI_Data.csv", encoding='latin-1')
@@ -47,9 +42,9 @@ df_FAO_new_country_names= pd.read_csv("data/FAO_Countries_name_changes.csv", del
 # FAO Country Name Changes
 df_policies= pd.read_csv("data/All_Food_Loss_Policies.csv", delimiter=';')
 
+
 ########################################
-# Clean Data 
-# Change Data Types
+# Vorbereitung der Daten
 ########################################
 # Drop duplicates
 df=df_FAO.drop_duplicates()
@@ -72,9 +67,7 @@ food_supply_stages=[
     'Packing'
     ]
 
-#st.write(df['food_supply_stage'].unique())
 df=df[df['food_supply_stage'].isin(food_supply_stages)]
-
 
 #change country names
 df["country"]=df["country"].replace(to_replace="United Republic of Tanzania",value=str("Tanzania"))
@@ -104,7 +97,7 @@ df=df[df["country"]!='United Kingdom of Great Britain and Northern Ireland']
 df=df[df["country"]!='Western Africa']
 df=df[df["country"]!='Western Asia']
 
-#change name back
+#change name
 df_FAO=df
 
 #align country names for later merge
@@ -112,7 +105,6 @@ def Change_Country_Names( df_new_names,column_new_names ,df_to_change,column_nam
     name_dict=df_new_names.set_index(column_new_names).T.to_dict('list')
     df_to_change[column_name]=df_to_change[column_name].map(name_dict)
     df_to_change[column_name]=df_to_change[column_name].str.get(0)
-
 Change_Country_Names(df_LPI_new_country_names,'LPI Countries',df_LPI, 'Country Name' )
 
 # select columns from LPI-data
@@ -193,7 +185,6 @@ df_reg['Income']=df_reg['Income'].replace(dict_income_group)
 # select Country
 selected_country=st.selectbox('Select country',options=df_reg['country'].unique())
 
-
 # filter df for dependent Income-Group
 selected_income_group=df_reg[df_reg['country']==selected_country]['Income'].unique()
 selected_income_group=str(selected_income_group)[2:-2]
@@ -204,15 +195,12 @@ selected_region=str(selected_region)[2:-2]
 
 
 ########################################
-# Regression
+# Berechnung der Regressionen
 ########################################
-
-#### Prepare Data for Income Goup Regressions
+#Vorbereitung der Daten für die Regression nach Einkommensgruppen
 def Income_group_data(Income_Group):
     df_income_group=df_reg[df_reg['Income']==f'{Income_Group}']
     return df_income_group
-
-
 
 def build_model(model_data):
     X=model_data.drop([
@@ -271,7 +259,6 @@ for i in range(len(Income_Groups)):
     df_reg_values.columns=[Income_Groups[i]]
     df_reg_income_total=df_reg_income_total.join(df_reg_values)
 
-
 build_model(df_reg[df_reg['country']==selected_country])
 df_reg_country=pd.DataFrame()
 df_reg_country.index=LPI_cat_names
@@ -296,24 +283,20 @@ for i in [9,10,11,12,13]:
 Income_mean=pd.pivot_table(df_reg,index=['Income'], values=LPI_cat,aggfunc=np.mean, fill_value=None)
 Income_mean=Income_mean.drop(index=['Nan'])
 
-
 df_selected_country=df_for_Means[df_for_Means['country']==selected_country]
 Country_mean=pd.pivot_table(df_selected_country,index=['country'], values=LPI_cat,aggfunc=np.mean, fill_value=None)
-
 
 
 Diff_Mean_Income= Income_mean.sub(Country_mean.iloc[0, :])
 Diff_Mean_Income['Abs_Sum_Mean_Diff']= abs(Diff_Mean_Income.sum(axis = 1))
 Diff_Mean_Income=Diff_Mean_Income.sort_values('Abs_Sum_Mean_Diff', ascending=True)
 
-
-
 dict_comparison={'Actual Group': [df_selected_country['Income'].value_counts().idxmax()],'Nearest Group': [Diff_Mean_Income.index[0]]}#,df_selected_country['Region'].value_counts().idxmax(),df_selected_country['Commodity Groups'].value_counts().idxmax(),df_selected_country['food_supply_stage'].value_counts().idxmax()], 'Nearest Group': [Diff_Mean_Income.index[0],Diff_Mean_Region.index[0],Diff_Mean_Commodity_group.index[0],Diff_Mean_Supply_stage.index[0]]}
 df_comparison=pd.DataFrame(dict_comparison)
 df_comparison.index=['Income Group']#, 'Region', 'Commodity Group', 'Food Supply Stage']
 df_comparison['is_equal']=(df_comparison['Nearest Group']==df_comparison['Actual Group'])
 
-
+#Zusatzinformationen zur Regression und den Mittelwerten, sind hier auskommentiert.
 # with st.expander('Details Regression'):
 #     st.write('Datatable with Regression Coef. per Income Group:')
 #     st.dataframe(df_reg_income_total)
@@ -335,7 +318,7 @@ df_comparison['is_equal']=(df_comparison['Nearest Group']==df_comparison['Actual
 #     st.dataframe(df_comparison)
 
 ################
-#TEST STATISTICS
+#statistische Tests
 ################
 
 def perform_Normalitytest(country,actual_income_group, nearest_income_group):
@@ -383,7 +366,6 @@ except:
     df_normality_test_nearest_income=[]
     st.info(f'{selected_country} does not have sufficient datapoints to run the model.')
 
-
 def perform_Ttest(country,actual_income_group, nearest_income_group):
     pval=0.05
     #Actual_Income & Country
@@ -415,7 +397,7 @@ except:
     df_ttest_actual_income=[]
     df_ttest_nearest_income=[]
 
-
+#Zusatzinformationen zu den statistischen Tests, sind hier auskommentiert.
 # with st.expander('Details Tests'):
 #     st.write('Normality Test Country')
 #     st.dataframe(df_normality_test_country)
@@ -429,16 +411,12 @@ except:
 #     st.dataframe(df_ttest_nearest_income)
 
 
-
 ################
-#LPI-category selection
+#Auswahl der LPI-Kategorien
 ################
-
-
 Income_group_actual=selected_income_group
 nearest_income_group=df_comparison.iloc[0,1]
 LPI_cat_order_country=df_reg_country[df_reg_country[f'{selected_country}']<0]
-
 
 #Auswahl ob Regression country oder Income-group gewählt wird und welche Income Group gewählt wird.
 datapoints=len(df_reg[df_reg['country']==selected_country])
@@ -447,18 +425,14 @@ if (len(df_reg[df_reg['country']==selected_country])<=5)|(sum(df_reg_country[sel
         LPI_cat_order_country=df_reg_income_total[df_reg_income_total[Income_group_actual]<0][Income_group_actual]
         st.info(f'{selected_country} does not have sufficient datapoints to run the model.')
         st.info(f'There are only {datapoints} datapoints for {selected_country} so the data of its income-group:"{Income_group_actual}" was used to determine the policy-areas.')
-        # if (sum(df_reg_country[selected_country])==0):
-        #     st.info(f'Additional Info: {selected_country}s datapoints were not interpretable for the model, so the Income-group data were used instead.')
+        
     if (df_comparison['is_equal'].bool()==False) & (df_ttest_actual_income['Ttest_check'].sum()>=df_ttest_nearest_income['Ttest_check'].sum()):
         LPI_cat_order_country=df_reg_income_total[df_reg_income_total[nearest_income_group]<0][nearest_income_group]
         st.info(f'{selected_country} does not have sufficient datapoints to run the model.')
-        st.info(f'There are only {datapoints} datapoints for {selected_country} so the data of its closest income-group:"{nearest_income_group}" was used to determine the policy-areas. The actual Income-group is: {Income_group_actual}.')
-        # if (sum(df_reg_country[selected_country])==0):
-        #     st.info(f'Additional Info: {selected_country}s datapoints were not interpretable for the model, so the Income-group data were used instead.')
+        st.info(f'There are only {datapoints} datapoints for {selected_country} so the data of its closest income-group:"{nearest_income_group}" was used to determine the policy-areas. The actual Income-group is: {Income_group_actual}.')      
 
 LPI_cat_order_country=pd.DataFrame(LPI_cat_order_country)
 LPI_cat_order_country.columns=[f'{selected_country}']
-
 
 LPI_cat_order_country=LPI_cat_order_country.sort_values(f'{selected_country}',ascending=False)
 LPI_cat_order_country['weight']=np.arange(len(LPI_cat_order_country))+1
@@ -476,19 +450,20 @@ LPI_cat_name={
     'Quality of trade- and transport-related infrastructure, score (1=low to 5=high)':'Infrastructure'
     }
 LPI_cat_order_country=LPI_cat_order_country.replace({'LPI-Category ordered by Priority (highest first)':LPI_cat_name})
+
+#Zusatzinformationen zu den identifizierten LPI-Kategorien, sind hier auskommentiert.
 # with st.expander('Details LPI-categories'):
 #     st.write('Identified policy areas to reduce Food Loss')
 #     st.dataframe(LPI_cat_order_country['LPI-Category ordered by Priority (highest first)'])
 
 
-
-
-
-
-
 ################
-#Factor Analysis
+# Faktoren-Analyse
 ################
+# Hier auskommentiert, um die Performanz der online Anwendung zu gewährleisten. 
+# Die Berechnung ist funktional und wurde einmalig zur Bestimmung der Faktorladungen genutzt. 
+# Die Ergebnisse der Berechnungen sind in der Datei 'CFA_Policies.csv' gespeichert.
+
 data_raw = pd.read_csv('data/CFA_Policies.csv',sep=';')
 # data=data_raw
 # LPI_categories=data['LPI-category'].unique()
@@ -566,7 +541,7 @@ st.write("Explore the **analysis-tools** linked in **sidebar on the left** for a
 st.write("---")
 st.subheader(f'Logistics policies to reduce food loss in {selected_country}')
 
-# CSS to inject contained in a string
+# CSS Befehle zur optischen Anpassung der Ausgabe
 hide_table_row_index = """
             <style>
             thead tr th:first-child {display:none}
@@ -574,7 +549,7 @@ hide_table_row_index = """
             </style>
             """
 
-# Inject CSS with Markdown
+# Einfügen der Markdown Befehle
 st.markdown(hide_table_row_index, unsafe_allow_html=True)
 
 
@@ -599,5 +574,5 @@ for i in range(len(LPI_cat_order_country['LPI-Category ordered by Priority (high
     with st.expander('See aditionally benefits and risks for selected policies.'):
         st.dataframe(data_LPI_cat[['Policy','Benefits','Risks']].set_index('Policy').dropna())
 
-
+# Angaben zum Autor
 st.write("by [Jannik Schäffer](https://www.linkedin.com/in/jannik-sch%C3%A4ffer)")
