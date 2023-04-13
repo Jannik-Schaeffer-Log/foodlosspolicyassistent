@@ -65,7 +65,7 @@ dict_income_group={
     'Nan':'Lower-Middle Income Economies',
 }
 
-df_LPI['Income']=df_LPI['Income'].replace(dict_income_group_dt)
+df_LPI['Income']=df_LPI['Income'].replace(dict_income_group)
 
 dict_region={
     'SUB-SAHARAN AFRICA': 'Sub-Saharan Africa',
@@ -86,7 +86,7 @@ dict_region_dt={
     'NORTH AMERICA':'Nord Amerika',
 }
 
-df_LPI['Region']=df_LPI['Region'].replace(dict_region_dt)
+df_LPI['Region']=df_LPI['Region'].replace(dict_region)
 
 
 
@@ -219,8 +219,11 @@ fig1 = go.Figure(data=go.Choropleth(
     colorbar_title = 'Wertung',
 ))
 fig1.update_layout(margin={"r":0,"t":25,"l":0,"b":0})
+
+title_dt_map='Chloroplethenkarte der gemittelten LPI-Gesamtwertungen von 2007 bis 2018'
+title_eng_map='Choropleth map of avg. LPI-scores'
 fig1.update_layout(
-    title_text = 'Chloroplethenkarte der gemittelten LPI-Gesamtwertungen von 2007 bis 2018',
+    title_text = title_eng_map,
     title_x=0.5,
     geo_scope='world', 
     template='simple_white',
@@ -233,7 +236,7 @@ st.plotly_chart(fig1, use_container_width=True)
 #  Änderung der LPI-Kategorienamen
 ########################################
 dict_series={
-    'Logistics performance index: Overall score (1=low to 5=high)':"LPI-Gesamtwertung",
+    'Logistics performance index: Overall score (1=low to 5=high)':"LPI Overall score",
     'Ability to track and trace consignments, score (1=low to 5=high)':"Tracking and tracing",
     'Competence and quality of logistics services, score (1=low to 5=high)':'Quality of log. services',
     'Ease of arranging competitively priced international shipments, score (1=low to 5=high)':'Ease of arranging shipments',
@@ -259,11 +262,11 @@ if radio_option=='country':
 if radio_option=='Income':
     df_filtered=df_filtered[df_filtered['Income']!='Nan']
 
-df_linechart=df_filtered[df_filtered['Series Name']!='LPI-Gesamtwertung'].groupby([f'{radio_option}','year']).mean()
+df_linechart=df_filtered[df_filtered['Series Name']!='LPI Overall score'].groupby([f'{radio_option}','year']).mean()
 df_linechart=df_linechart.reset_index()
 
 # Erstellen des Liniendiagramms
-fig2 = px.line(df_linechart, x="year", y="score_rank", color=f"{radio_option}", title=f"Liniendiagramm der LPI-Gesamtwertungen der Regionen",markers=True)
+fig2 = px.line(df_linechart, x="year", y="score_rank", color=f"{radio_option}", title=f"Linechart of LPI score and {radio_option}",markers=True)
 fig2.update_layout(xaxis_title="Jahr", yaxis_title=f'Wertung', template='seaborn')
 
 # Abbilden des Graphen
@@ -275,29 +278,29 @@ st.plotly_chart(fig2, use_container_width=True)
 ########################################
 
 # Anpassen der Daten für die Visualisierung
-df_boxplot=df_filtered#[df_filtered['Series Name']!='LPI-Gesamtwertung']
+df_boxplot=df_filtered[df_filtered['Series Name']!='LPI Overall score']
 if radio_option!='Series Name': 
     selected_series=st.selectbox('Select series',df_boxplot['Series Name'].unique())
-    df_boxplot=df_filtered[df_filtered['Series Name']!='LPI-Gesamtwertung']
+    df_boxplot=df_filtered[df_filtered['Series Name']!='LPI Overall score']
 
 # Erstellen des Boxplot-Diagramms
 ytitle_eng_box=series
 ytitle_dt_box='Wertung'
 xtitle_dt_box=radio_option
 if radio_option == 'Series Name':
-    xtitle_dt_box='LPI-Kategorien'
+    xtitle_dt_box='LPI-categories'
 if radio_option == 'Income':
-    xtitle_dt_box='Einkommensgruppe'
+    xtitle_dt_box='Income-groups'
 
-fig4 = px.box(df_boxplot, x=f'{radio_option}', y="score_rank", title='Boxplot-Diagramm der LPI-Gesamtwertungen nach Regionen' )
-fig4.update_layout(yaxis_title=f'{ytitle_dt_box}', xaxis_title=f'{xtitle_dt_box}', template='seaborn')
+fig4 = px.box(df_boxplot, x=f'{radio_option}', y="score_rank", title=f'Boxplot of {radio_option}' )
+fig4.update_layout(yaxis_title=f'{ytitle_eng_box}', xaxis_title=f'{xtitle_dt_box}', template='seaborn')
 
 # Abbilden des Graphen
 st.plotly_chart(fig4, use_container_width=True)
 
 
 ########################################
-# Further Insight in raw Data
+# Weiter Einsichten in die Rohdaten
 ########################################
 
 # Zeigen der zugrundeliegenden gefilterten Daten
